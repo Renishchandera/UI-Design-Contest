@@ -10,7 +10,7 @@ class User(AbstractUser):
 class Contest(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image  = models.ImageField(upload_to='images/', blank=True, null=True)
+    image  = models.ImageField(upload_to='images/', blank=False, null=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
    # created_at = models.DateTimeField(auto_now_add=True)

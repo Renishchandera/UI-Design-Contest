@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - </title>
+    <style>
+        .nav-mainContainer
+        {
+            display: flex;
+            flex-direction: row;
+        }
+        .sidenavcontainer
+        {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
+            height: 100vh;
+            width: max-content;
+        }
+        .navBox
+        {
+            padding: 1rem;
+            margin: 1rem;
+            border: 2px solid purple;
+        }
+        .navBox:hover
+        {
+            border-radius: 1rem;
+            background-color: gray;
+        }
+        .mainContainer
+        {   padding: 1rem;
+            border: 2px solid black;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .contestBlock
+        {
+            padding: 1rem;
+            border: 1px solid purple;
+            height: max-content;
+            width: max-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .contestBlock:hover
+        {
+            background-color: gray;
+        }
+        .contestImage{
+            max-width: 20rem;
+            max-height: 20rem;
+        }
+        .footerContainer
+        {
+            width: 100vw;
+            height: 7rem;
+            background-color: gray;
+            border: 2px solid black;
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="rootContainer">
+    {% csrf_token %}
+    <div class="nav-mainContainer">
+    <div class="sidenavcontainer">
+        <div class="navBox profileNav">
+            <a href="#">Home</a> <i>icon</i>
+        </div>
+        <div class="navBox profileNav">
+            <a href="./profile/profile.html">My Profile</a> <i>icon</i>
+        </div>
+        <div class="navBox myContestsNav">
+            <a href="./mycontests/mycontests.html">My Contests</a> <i>icon</i>
+        </div>
+        <div class="navBox leaderboardNav">
+            <a href="./leaderboard/leaderboard.html">LeaderBoard</a> <i>icon</i>
+        </div>
+        <div class="navBox votingNav">
+            <a href="./votingPortal.html">Vote COntests</a><i>icon</i>
+        </div>
+        <div class="navBox votingNav">
+            <a href="./shop/shop.html">shop</a><i>icon</i>
+        </div>
+        <div class="navBox feedbackNav">
+            <a href="./feedback.html">Give Feedback</a> 
+        </div>   
+
+    </div>
+    <div class="mainContainer">
+            <div class="contestBlock">
+                <h5>This is contest</h5>
+                <img>
+                <p>Contest Info and small description</p>
+                <a>View More / Participate </a>
+            </div>
+            <!-- Display from indexview sending contests parameter -->
+             {% for contest in contests %}
+             <div class="contestBlock">
+                <h5>{{ contest.title }}</h5>
+                <img class="contestImage" src="{{ contest.image.url }}" alt="image">
+                <p>{{ contest.description }}</p>
+                <a href="{% url 'contest_view' contest.id %}">View More / Participate </a>
+             </div>
+             {% endfor %}
+           
+    </div>
+</div>
+    <div class="footerContainer">
+        This will be footer
+    </div>
+</body>
+</html>
