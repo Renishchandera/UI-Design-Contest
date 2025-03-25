@@ -1,0 +1,24 @@
+/* 
+.nav-mainContainer
+{
+    display: inline;
+}
+.sidenavcontainer
+{
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    height: 100vh;
+    width: max-content;
+}
+.navBox
+{
+    padding: 1rem;
+    margin: 1rem;
+    border: 2px solid purple;
+}
+.navBox:hover
+{
+    border-radius: 1rem;
+    background-color: gray;
+} */

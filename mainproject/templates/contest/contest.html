@@ -1,120 +1,14 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - </title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-
-    }
-
-    .nav-mainContainer {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .sidenavcontainer {
-      display: flex;
-      flex-direction: column;
-      border: 2px solid black;
-      height: 100vh;
-      width: max-content;
-    }
-
-    .navBox {
-      padding: 1rem;
-      margin: 1rem;
-      border: 2px solid purple;
-    }
-
-    .navBox:hover {
-      border-radius: 1rem;
-      background-color: gray;
-    }
-
-    .mainContainer {
-      width: 100%;
-      background-color: lightblue;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-    }
-
-    .contestContainer {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      align-items: center;
-      padding: 2rem;
-      justify-content: center;
-    }
-
-    .contestBlock {
-      padding: 1rem;
-      border: 1px solid purple;
-      height: max-content;
-      width: max-content;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .contestBlock:hover {
-      background-color: gray;
-    }
-
-    .contestImage {
-      max-width: 20rem;
-      max-height: 20rem;
-    }
-
-    .footerContainer {
-      width: 100vw;
-      height: 7rem;
-      background-color: gray;
-      border: 2px solid black;
-      text-align: center;
-      padding: 1rem;
-    }
-
-    .editorForm {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .editorContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .codeContainer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .CodeMirror {
-      width: 30rem;
-      height: 30rem;
-    }
-    #output-frame{
-      width: max-content;
-      height: max-content;
-      max-width: 50rem;
-      max-height: 50rem;
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="{% static 'contest/contest.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'contest/index.css' %}">
   <!-- CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -129,43 +23,22 @@
 
 <body class="rootContainer">
   {% csrf_token %}
-  <div class="nav-mainContainer">
-    <div class="sidenavcontainer">
-      <div class="navBox profileNav">
-        <a href="#">Home</a> <i>icon</i>
-      </div>
-      <div class="navBox profileNav">
-        <a href="./profile/profile.html">My Profile</a> <i>icon</i>
-      </div>
-      <div class="navBox myContestsNav">
-        <a href="./mycontests/mycontests.html">My Contests</a> <i>icon</i>
-      </div>
-      <div class="navBox leaderboardNav">
-        <a href="./leaderboard/leaderboard.html">LeaderBoard</a> <i>icon</i>
-      </div>
-      <div class="navBox votingNav">
-        <a href="./votingPortal.html">Vote COntests</a><i>icon</i>
-      </div>
-      <div class="navBox votingNav">
-        <a href="./shop/shop.html">shop</a><i>icon</i>
-      </div>
-      <div class="navBox feedbackNav">
-        <a href="./feedback.html">Give Feedback</a>
-      </div>
 
-    </div>
     <div class="mainContainer">
+      {% include 'contest/navbar.html' %}
       <div class="contestContainer">
         {% csrf_token %}
 
 
         {% block content %}
+        <div class="contestInfo">
         <h1>{{ contest.title }}</h1>
 
         <img class="contestImage" src="{{ contest.image.url }}" alt="image">
         <p>{{ contest.description }}</p>
-        {% endblock %}
       </div>
+        {% endblock %}
+      
       <!--  -->
       {% if messages %}
         {% for message in messages %}
@@ -177,7 +50,7 @@
       {% if not has_participated %}
       <form method="post" action="{% url 'participate' contest.id %}">
         {% csrf_token %}
-        <button name="participate" type="submit">Participate</button>
+        <button id="submitButton" name="participate" type="submit">Submit Code</button>
       </form>
       {% else %}
 
@@ -202,10 +75,10 @@
         <span>
           <span>Entry Fee: </span>
           <span>300</span>
-          <span>coin icon</span>
+          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000" alt="coin icon" srcset=""></span>
         </span>
         {% if has_participated %}
-        <button name="submit" type="submit">Submit Code</button>
+        <button id="submitButton" name="submit" type="submit">Submit Code</button>
         {% endif %}
       </form>
       {% endif %}
@@ -222,9 +95,7 @@
 
     </div>
   </div>
-  <div class="footerContainer">
-    This will be footer
-  </div>
+  {% include 'contest/footer.html' %}
   <script>
     // Initialize CodeMirror for HTML
     var htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {

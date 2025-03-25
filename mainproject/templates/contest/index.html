@@ -1,119 +1,62 @@
 <!DOCTYPE html>
+<!-- load static folder-->
+{% load static %}
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - </title>
-    <style>
-        .nav-mainContainer
-        {
-            display: flex;
-            flex-direction: row;
-        }
-        .sidenavcontainer
-        {
-            display: flex;
-            flex-direction: column;
-            border: 2px solid black;
-            height: 100vh;
-            width: max-content;
-        }
-        .navBox
-        {
-            padding: 1rem;
-            margin: 1rem;
-            border: 2px solid purple;
-        }
-        .navBox:hover
-        {
-            border-radius: 1rem;
-            background-color: gray;
-        }
-        .mainContainer
-        {   padding: 1rem;
-            border: 2px solid black;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .contestBlock
-        {
-            padding: 1rem;
-            border: 1px solid purple;
-            height: max-content;
-            width: max-content;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .contestBlock:hover
-        {
-            background-color: gray;
-        }
-        .contestImage{
-            max-width: 20rem;
-            max-height: 20rem;
-        }
-        .footerContainer
-        {
-            width: 100vw;
-            height: 7rem;
-            background-color: gray;
-            border: 2px solid black;
-            text-align: center;
-            padding: 1rem;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'contest/navbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'contest/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'contest/footer.css' %}">
+
 </head>
+
 <body class="rootContainer">
     {% csrf_token %}
-    <div class="nav-mainContainer">
-    <div class="sidenavcontainer">
-        <div class="navBox profileNav">
-            <a href="#">Home</a> <i>icon</i>
+
+    <div class="mainContainer">
+        {% include 'contest/navbar.html' %}
+        <div class="contestContainer">
+
+
+        
+            <!-- Display from indexview sending contests parameter -->
+            {% for contest in contests %}
+            
+            <div
+                class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <a href="#">
+                    <img class="rounded-t-lg" src="{{ contest.image.url }}" alt="contest image" />
+                </a>
+                <div class="p-5">
+                    <a href="#">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {{ contest.title }}</h5>
+                    </a>
+                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        {{ contest.description }}
+                    </p>
+                    <a href="{% url 'contest_view' contest.id %}"
+                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Participate
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        <div class="navBox profileNav">
-            <a href="./profile/profile.html">My Profile</a> <i>icon</i>
-        </div>
-        <div class="navBox myContestsNav">
-            <a href="./mycontests/mycontests.html">My Contests</a> <i>icon</i>
-        </div>
-        <div class="navBox leaderboardNav">
-            <a href="./leaderboard/leaderboard.html">LeaderBoard</a> <i>icon</i>
-        </div>
-        <div class="navBox votingNav">
-            <a href="./votingPortal.html">Vote COntests</a><i>icon</i>
-        </div>
-        <div class="navBox votingNav">
-            <a href="./shop/shop.html">shop</a><i>icon</i>
-        </div>
-        <div class="navBox feedbackNav">
-            <a href="./feedback.html">Give Feedback</a> 
-        </div>   
 
     </div>
-    <div class="mainContainer">
-            <div class="contestBlock">
-                <h5>This is contest</h5>
-                <img>
-                <p>Contest Info and small description</p>
-                <a>View More / Participate </a>
-            </div>
-            <!-- Display from indexview sending contests parameter -->
-             {% for contest in contests %}
-             <div class="contestBlock">
-                <h5>{{ contest.title }}</h5>
-                <img class="contestImage" src="{{ contest.image.url }}" alt="image">
-                <p>{{ contest.description }}</p>
-                <a href="{% url 'contest_view' contest.id %}">View More / Participate </a>
-             </div>
-             {% endfor %}
-           
-    </div>
-</div>
-    <div class="footerContainer">
-        This will be footer
-    </div>
+    {% include 'contest/footer.html'  %}
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </body>
+
 </html>
