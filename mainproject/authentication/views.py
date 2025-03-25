@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from .forms import SignupForm, LoginForm
@@ -11,7 +11,7 @@ def signup_view(request):
             user = form.save()
             login(request, user)  # Auto-login after signup
             messages.success(request, "Signup successful!")
-            return redirect("home")  # Redirect to homepage after signup
+            return redirect("index_view")# Redirect to homepage after signup
     else:
         form = SignupForm()
     return render(request, "authentication/signup.html", {"form": form})
@@ -27,7 +27,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, "Login successful!")
-                return redirect("home")  # Redirect to homepage after login
+                return redirect("index_view")  # Redirect to homepage after login
             else:
                 messages.error(request, "Invalid username or password.")
     else:

@@ -1,19 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - </title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+
+    }
+
+    .nav-mainContainer {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .sidenavcontainer {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid black;
+      height: 100vh;
+      width: max-content;
+    }
+
+    .navBox {
+      padding: 1rem;
+      margin: 1rem;
+      border: 2px solid purple;
+    }
+
+    .navBox:hover {
+      border-radius: 1rem;
+      background-color: gray;
+    }
+
+    .mainContainer {
+      width: 100%;
+      background-color: lightblue;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+    }
+
+    .contestContainer {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
+      padding: 2rem;
+      justify-content: center;
+    }
+
+    .contestBlock {
+      padding: 1rem;
+      border: 1px solid purple;
+      height: max-content;
+      width: max-content;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contestBlock:hover {
+      background-color: gray;
+    }
+
+    .contestImage {
+      max-width: 20rem;
+      max-height: 20rem;
+    }
+
+    .footerContainer {
+      width: 100vw;
+      height: 7rem;
+      background-color: gray;
+      border: 2px solid black;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .editorForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .editorContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .codeContainer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .CodeMirror {
+      width: 30rem;
+      height: 30rem;
+    }
+    #output-frame{
+      width: max-content;
+      height: max-content;
+      max-width: 50rem;
+      max-height: 50rem;
+    }
+  </style>
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/theme/dracula.min.css">
+
+
 </head>
-<body>
-    {% csrf_token %}
+
+<body class="rootContainer">
+  {% csrf_token %}
+  <div class="nav-mainContainer">
+    <div class="sidenavcontainer">
+      <div class="navBox profileNav">
+        <a href="#">Home</a> <i>icon</i>
+      </div>
+      <div class="navBox profileNav">
+        <a href="./profile/profile.html">My Profile</a> <i>icon</i>
+      </div>
+      <div class="navBox myContestsNav">
+        <a href="./mycontests/mycontests.html">My Contests</a> <i>icon</i>
+      </div>
+      <div class="navBox leaderboardNav">
+        <a href="./leaderboard/leaderboard.html">LeaderBoard</a> <i>icon</i>
+      </div>
+      <div class="navBox votingNav">
+        <a href="./votingPortal.html">Vote COntests</a><i>icon</i>
+      </div>
+      <div class="navBox votingNav">
+        <a href="./shop/shop.html">shop</a><i>icon</i>
+      </div>
+      <div class="navBox feedbackNav">
+        <a href="./feedback.html">Give Feedback</a>
+      </div>
+
+    </div>
+    <div class="mainContainer">
+      <div class="contestContainer">
+        {% csrf_token %}
 
 
-{% block content %}
-  <h1>{{ contest.title }}</h1>
+        {% block content %}
+        <h1>{{ contest.title }}</h1>
 
-  <img src="{{contest.image.url}}" alt="image">
-  <p>{{ contest.description }}</p>
-{% endblock %}
+        <img class="contestImage" src="{{ contest.image.url }}" alt="image">
+        <p>{{ contest.description }}</p>
+        {% endblock %}
+      </div>
+      <!--  -->
+      {% if messages %}
+        {% for message in messages %}
+        <div class="errorMessage">
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+      {% if not has_participated %}
+      <form method="post" action="{% url 'participate' contest.id %}">
+        {% csrf_token %}
+        <button name="participate" type="submit">Participate</button>
+      </form>
+      {% else %}
+
+      <form method="post" class="editorForm">
+        {% csrf_token %}
+        <p>You have participated! Start coding.</p>
+        </br>
+        <div class="codeContainer">
+          {% if has_participated %}
+          <div class="editorContainer">
+            <label>HTML Code:</label>
+            <textarea name="html_code" id="html-code">{{ submission.html_code }}</textarea>
+          </div>
+
+          <div class="editorContainer">
+            <label>CSS Code:</label>
+            <textarea name="css_code" id="css-code">{{ submission.css_code }}</textarea>
+          </div>
+
+          {% endif %}
+        </div>
+        <span>
+          <span>Entry Fee: </span>
+          <span>300</span>
+          <span>coin icon</span>
+        </span>
+        {% if has_participated %}
+        <button name="submit" type="submit">Submit Code</button>
+        {% endif %}
+      </form>
+      {% endif %}
+    </br>
+    </br>
+      <div>
+        {% if has_participated %}
+        <h3 style="text-align: center;">Live Output</h3>
+        <iframe id="output-frame"></iframe>
+        {% endif %}
+      </div>
+
+
+
+    </div>
+  </div>
+  <div class="footerContainer">
+    This will be footer
+  </div>
+  <script>
+    // Initialize CodeMirror for HTML
+    var htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {
+      mode: "xml",
+      theme: "dracula",
+      lineNumbers: true,
+      autoCloseTags: true,
+      autoCloseBrackets: true
+    });
+
+    // Initialize CodeMirror for CSS
+    var cssEditor = CodeMirror.fromTextArea(document.getElementById("css-code"), {
+      mode: "css",
+      theme: "dracula",
+      lineNumbers: true,
+      autoCloseBrackets: true
+    });
+
+    function updatePreview() {
+      var htmlCode = htmlEditor.getValue();
+      var cssCode = "<style>" + cssEditor.getValue() + "</style>";
+      var iframe = document.getElementById("output-frame").contentWindow.document;
+      iframe.open();
+      iframe.write(htmlCode + cssCode);
+      iframe.close();
+    }
+
+    let isDisabled = false;
+      // Attach event listeners for live preview
+    htmlEditor.on("change", updatePreview);
+    cssEditor.on("change", updatePreview);
+
+    // Load preview on page load
+    window.onload = updatePreview;
+  </script>
 </body>
+
 </html>

@@ -10,7 +10,7 @@ class User(AbstractUser):
 class Contest(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image  = models.ImageField(upload_to='images/', blank=False, null=False)
+    image  = models.ImageField(upload_to='images/', blank=False, null=False, default='default.jpg')
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
    # created_at = models.DateTimeField(auto_now_add=True)
@@ -22,7 +22,6 @@ class Contest(models.Model):
 
 
 class Submission(models.Model):
-   # participation = models.ForeignKey(Participation, on_delete=models.CASCADE)
     html_code = models.TextField() 
     css_code = models.TextField() 
     contest_id = models.ForeignKey(Contest, on_delete=models.CASCADE)
@@ -30,7 +29,7 @@ class Submission(models.Model):
     votes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.participation.user.username}'s submission for {self.participation.contest.title}"
+        return f"{self.user_id.username}'s submission for {self.contest_id.title}"
 
 
 class Participation(models.Model):
@@ -38,8 +37,8 @@ class Participation(models.Model):
     contest_id = models.ForeignKey(Contest, on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
-    submission_id = models.ForeignKey(Submission, on_delete=models.CASCADE)
+    submission_id = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} in {self.contest.title}"
+        return f"{self.user_id.username} in {self.contest_id.title}"
 
