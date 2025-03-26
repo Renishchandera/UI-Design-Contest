@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - </title>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="{% static 'contest/contest.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'contest/index.css' %}">
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/theme/dracula.min.css">
+
+
+</head>
+
+<body class="rootContainer">
+  {% csrf_token %}
+
+    <div class="mainContainer">
+      {% include 'contest/navbar.html' %}
+      <div class="contestContainer">
+        {% csrf_token %}
+
+
+        {% block content %}
+        <div class="contestInfo">
+        <h1>{{ contest.title }}</h1>
+
+        <img class="contestImage" src="{{ contest.image.url }}" alt="image">
+        <p>{{ contest.description }}</p>
+      </div>
+        {% endblock %}
+      
+      <!--  -->
+      {% if messages %}
+        {% for message in messages %}
+        <div class="errorMessage">
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+      {% if not has_participated %}
+      <form method="post" action="{% url 'participate' contest.id %}">
+        {% csrf_token %}
+        <span>
+          <span>Entry Fee: </span>
+          <span>300</span>
+          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000" alt="coin icon" srcset=""></span>
+        </span>
+      </br>
+        <button id="submitButton" name="participate" type="submit">Participate</button>
+      </form>
+      {% else %}
+
+      <form method="post" class="editorForm">
+        {% csrf_token %}
+        <p>You have participated! Start coding.</p>
+        </br>
+        <div class="codeContainer">
+          {% if has_participated %}
+          <div class="editorContainer">
+            <label>HTML Code:</label>
+            <textarea name="html_code" id="html-code">{{ submission.html_code }}</textarea>
+          </div>
+
+          <div class="editorContainer">
+            <label>CSS Code:</label>
+            <textarea name="css_code" id="css-code">{{ submission.css_code }}</textarea>
+          </div>
+
+          {% endif %}
+        </div>
+        {% if has_participated %}
+        <button id="submitButton" name="submit" type="submit">Submit Code</button>
+        {% endif %}
+      </form>
+      {% endif %}
+    </br>
+    </br>
+      <div>
+        {% if has_participated %}
+        <h3 style="text-align: center;">Live Output</h3>
+        <iframe id="output-frame"></iframe>
+        {% endif %}
+      </div>
+
+
+
+    </div>
+  </div>
+  {% include 'contest/footer.html' %}
+  <script>
+    // Initialize CodeMirror for HTML
+    var htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {
+      mode: "xml",
+      theme: "dracula",
+      lineNumbers: true,
+      autoCloseTags: true,
+      autoCloseBrackets: true
+    });
+
+    // Initialize CodeMirror for CSS
+    var cssEditor = CodeMirror.fromTextArea(document.getElementById("css-code"), {
+      mode: "css",
+      theme: "dracula",
+      lineNumbers: true,
+      autoCloseBrackets: true
+    });
+
+    function updatePreview() {
+      var htmlCode = htmlEditor.getValue();
+      var cssCode = "<style>" + cssEditor.getValue() + "</style>";
+      var iframe = document.getElementById("output-frame").contentWindow.document;
+      iframe.open();
+      iframe.write(htmlCode + cssCode);
+      iframe.close();
+    }
+
+    let isDisabled = false;
+      // Attach event listeners for live preview
+    htmlEditor.on("change", updatePreview);
+    cssEditor.on("change", updatePreview);
+
+    // Load preview on page load
+    window.onload = updatePreview;
+  </script>
+</body>
+
+</html>

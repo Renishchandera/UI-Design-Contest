@@ -22,10 +22,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from django.contrib import admin
+from contest.views import landing_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('contest/', include('contest.urls')),
+    path('authentication/', include('authentication.urls')), 
+     path("", landing_view, name="landing"),
+     
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,18 @@
+
+.mainContainer
+{   
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    border: 2px solid black;
+}
+.contestContainer{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.coinIcon{
+    max-width: 2rem;
+    max-height: 2rem;
+    display: inline;
+}

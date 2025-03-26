@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'landing.css' %}">
+
+</head>
+<body>
+    {% csrf_token %}
+    <h1>Landing Page</h1>
+    <!-- go to login -->
+     <a href="{% url 'login' %}">Login</a>
+     <!-- go to signup -->
+      <a href="{% url 'signup' %}">Register</a>
+      <!-- Go to index -->
+       
+</body>
+</html>
