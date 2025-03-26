@@ -50,7 +50,13 @@
       {% if not has_participated %}
       <form method="post" action="{% url 'participate' contest.id %}">
         {% csrf_token %}
-        <button id="submitButton" name="participate" type="submit">Submit Code</button>
+        <span>
+          <span>Entry Fee: </span>
+          <span>300</span>
+          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000" alt="coin icon" srcset=""></span>
+        </span>
+      </br>
+        <button id="submitButton" name="participate" type="submit">Participate</button>
       </form>
       {% else %}
 
@@ -72,11 +78,6 @@
 
           {% endif %}
         </div>
-        <span>
-          <span>Entry Fee: </span>
-          <span>300</span>
-          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000" alt="coin icon" srcset=""></span>
-        </span>
         {% if has_participated %}
         <button id="submitButton" name="submit" type="submit">Submit Code</button>
         {% endif %}

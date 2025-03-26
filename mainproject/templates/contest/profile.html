@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!-- load static folder-->
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'contest/navbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'contest/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'contest/footer.css' %}">
+</head>
+<body>
+    {% csrf_token %}
+
+    <div class="mainContainer">
+        {% include 'contest/navbar.html' %}
+        <div class="profileContainer">
+
+                <h1>This is Profile of {{user.id}}</h1>
+                <h2>Username: {{user.username}}</h2>
+                <h3>COINS: {{user.coins}}</h3>
+        
+           
+        </div>
+
+    </div>
+    {% include 'contest/footer.html'  %}
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+</body>
+</html>

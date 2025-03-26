@@ -1,6 +1,6 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from .models import Contest, Participation
-from .models import Submission
+from .models import Submission, User
 from .forms import SubmissionForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -12,11 +12,11 @@ def landing_view(request):
         return redirect('contest/')
     else:
         return render(request, 'landing.html')
-
+@login_required
 def index_view(request):
     #retirve contest from database
     contests = Contest.objects.all()
-    return render(request, 'contest/index.html', {'contests': contests})
+    return render(request, 'contest/index.html', {"user": request.user,'contests': contests})
 
 
 
@@ -52,7 +52,7 @@ def contest_view(request, contest_id):
 
     
 
-    return render(request, "contest/contest.html", {"submission": submission, "contest": contest, "has_participated": has_participated})
+    return render(request, "contest/contest.html", {"user": request.user,"submission": submission, "contest": contest, "has_participated": has_participated})
 
 
 @login_required
@@ -83,3 +83,25 @@ def participate(request, contest_id):
 
     messages.success(request, "You have successfully participated in the contest!")
     return redirect('contest_view', contest_id=contest.id)
+
+# Profile view
+@login_required
+def profile_view(request, user_id):
+    user = request.user
+    if(user.id == user_id):
+        submissions = Submission.objects.filter(user_id=user)
+        participations = Participation.objects.filter(user_id=user)
+        # get all contests user participated
+        coins = user.coins
+
+        return render(request, "contest/profile.html", {"user": user, "submissions": submissions})
+    else:
+        return redirect('index_view')
+    
+def mycontests_view(request):
+    user = request.user
+
+    participated_contests = Contest.objects.filter(participation__user_id=request.user)
+
+    return render(request, "contest/mycontests.html", {"user": user, "contests": participated_contests})
+

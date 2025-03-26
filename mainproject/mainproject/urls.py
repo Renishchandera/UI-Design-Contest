@@ -30,6 +30,7 @@ urlpatterns = [
     path('contest/', include('contest.urls')),
     path('authentication/', include('authentication.urls')), 
      path("", landing_view, name="landing"),
+     
 ]
 
 if settings.DEBUG:
