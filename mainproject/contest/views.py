@@ -26,7 +26,7 @@ def contest_view(request, contest_id):
     submission = Submission.objects.filter(contest_id=contest_id, user_id=request.user).first()
     contest = Contest.objects.filter(id=contest_id).first()
     has_participated = Participation.objects.filter(user_id=request.user, contest_id=contest).exists()
-
+    total_participations = Participation.objects.filter(contest_id=contest_id).count()
     if request.method == "POST":
         html_code = request.POST.get("html_code")
         css_code = request.POST.get("css_code")
@@ -52,7 +52,7 @@ def contest_view(request, contest_id):
 
     
 
-    return render(request, "contest/contest.html", {"user": request.user,"submission": submission, "contest": contest, "has_participated": has_participated})
+    return render(request, "contest/contest.html", {"user": request.user,"submission": submission, "contest": contest, "has_participated": has_participated,"current_participations": total_participations})
 
 
 @login_required
@@ -62,7 +62,7 @@ def participate(request, contest_id):
 
     # Check if the user has already participated
     if Participation.objects.filter(user_id=user, contest_id=contest).exists():
-        messages.warning(request, "You have already participated in this contest.")
+        messages.error(request, "You have already participated in this contest.")
         return redirect('contest_view', contest_id=contest.id)
 
     # Check if the contest has reached its participation limit

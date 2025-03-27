@@ -1,4 +1,13 @@
 
+.contestInfo{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color:aliceblue;
+  justify-content: center;
+}
   .editorForm {
     display: flex;
     flex-direction: column;

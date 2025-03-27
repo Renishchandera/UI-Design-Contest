@@ -24,39 +24,66 @@
 <body class="rootContainer">
   {% csrf_token %}
 
-    <div class="mainContainer">
-      {% include 'contest/navbar.html' %}
-      <div class="contestContainer">
-        {% csrf_token %}
+  <div class="mainContainer">
+    {% include 'contest/navbar.html' %}
+    <div class="contestContainer">
+      {% csrf_token %}
 
 
-        {% block content %}
-        <div class="contestInfo">
+      {% block content %}
+      <div class="contestInfo">
         <h1>{{ contest.title }}</h1>
 
-        <img class="contestImage" src="{{ contest.image.url }}" alt="image">
+
+        <figure class="max-w-lg">
+          <img class="h-auto max-w-full rounded-lg" src="{{ contest.image.url }}" alt="image description">
+          <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Design To Create</figcaption>
+        </figure>
+        <h4 style="text-decoration: underline; text-align: left;">Description</h4>
         <p>{{ contest.description }}</p>
       </div>
-        {% endblock %}
-      
+      {% endblock %}
+
       <!--  -->
       {% if messages %}
-        {% for message in messages %}
-        <div class="errorMessage">
-          {{ message }}
+      {% for message in messages %}
+      <div class="message">
+        {% if message.tags == 'error' %}
+        <div class="p-4 mb-4 text-sm text-red-900 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <span class="font-medium">{{ message }}</span>
         </div>
-        {% endfor %}
+        {% elif message.tags == 'success' %}
+        <div class="p-4 mb-4 text-sm text-green-900 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+          <span class="font-medium">{{ message }}</span>
+        </div>
         {% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
       {% if not has_participated %}
       <form method="post" action="{% url 'participate' contest.id %}">
         {% csrf_token %}
         <span>
           <span>Entry Fee: </span>
-          <span>300</span>
-          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000" alt="coin icon" srcset=""></span>
+          <span>{{contest.entry_fee}}</span>
+          <span><img class="coinIcon" src="https://img.icons8.com/?size=100&id=iRgwumOATYL6&format=png&color=000000"
+              alt="coin icon" srcset=""></span>
         </span>
-      </br>
+        <span>
+          <span>Current: </span>
+          <span>{{current_participations}}</span>
+          <span>/</span>
+          <span>Limit: </span>
+          <span>{{contest.limit}}</span>
+        </span>
+        </br>
+        {% if current_participations == contest.limit %}
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <span class="font-medium">Sorry,</span>The contest is full! Checkout Other Contests.
+        </div>
+        {% else %}
         <button id="submitButton" name="participate" type="submit">Participate</button>
+        {% endif %}
       </form>
       {% else %}
 
@@ -83,8 +110,8 @@
         {% endif %}
       </form>
       {% endif %}
-    </br>
-    </br>
+      </br>
+      </br>
       <div>
         {% if has_participated %}
         <h3 style="text-align: center;">Live Output</h3>
@@ -125,7 +152,7 @@
     }
 
     let isDisabled = false;
-      // Attach event listeners for live preview
+    // Attach event listeners for live preview
     htmlEditor.on("change", updatePreview);
     cssEditor.on("change", updatePreview);
 

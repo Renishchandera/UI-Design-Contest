@@ -8,11 +8,38 @@
 }
 .contestContainer{
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
     flex-wrap: wrap;
 }
+.contestContainer > div{
+    margin: 0.75rem;
+    padding: 0.5rem;
+}
 .coinIcon{
+    width: 2rem;
+    height: 2rem;
+    display: inline;
+}
+.navCoinIcon{
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline;
+
+}
+.contestDescription{
+    /* over floe ellipsis for 5 lines*/
+    height: max-content;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-clamp: 5;
+}
+
+.logo{
+    object-fit: contain;
     max-width: 2rem;
     max-height: 2rem;
     display: inline;
+
 }

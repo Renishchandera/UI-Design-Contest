@@ -1,0 +1,9 @@
+.mycontestsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.mycontestsContainer > div{
+    margin: 0.75rem;
+}
