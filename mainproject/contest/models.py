@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):  
     coins = models.IntegerField(default=0)
+    voted_submissions = models.ManyToManyField('Submission', blank=True)
+
     def __str__(self):
         return self.username
 

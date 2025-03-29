@@ -6,14 +6,20 @@
     padding: 1rem;
     border: 2px solid black;
 }
-.contestContainer{
+.contestsContainer{
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: start;
+    align-items: flex-start;
+    justify-content: space-evenly;
     flex-wrap: wrap;
 }
-.contestContainer > div{
+.contestContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.contestsContainer > div{
     margin: 0.75rem;
     padding: 0.5rem;
 }

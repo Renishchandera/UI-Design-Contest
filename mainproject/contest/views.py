@@ -4,6 +4,8 @@ from .models import Submission, User
 from .forms import SubmissionForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
 # Create your views here.
 
 def landing_view(request):
@@ -27,6 +29,7 @@ def contest_view(request, contest_id):
     contest = Contest.objects.filter(id=contest_id).first()
     has_participated = Participation.objects.filter(user_id=request.user, contest_id=contest).exists()
     total_participations = Participation.objects.filter(contest_id=contest_id).count()
+    is_ended = timezone.now() >= contest.end_date
     if request.method == "POST":
         html_code = request.POST.get("html_code")
         css_code = request.POST.get("css_code")
@@ -52,7 +55,7 @@ def contest_view(request, contest_id):
 
     
 
-    return render(request, "contest/contest.html", {"user": request.user,"submission": submission, "contest": contest, "has_participated": has_participated,"current_participations": total_participations})
+    return render(request, "contest/contest.html", {"user": request.user,"submission": submission, "contest": contest, "has_participated": has_participated,"current_participations": total_participations, "is_ended": is_ended})
 
 
 @login_required
@@ -97,7 +100,7 @@ def profile_view(request, user_id):
         return render(request, "contest/profile.html", {"user": user, "submissions": submissions})
     else:
         return redirect('index_view')
-    
+@login_required   
 def mycontests_view(request):
     user = request.user
 
@@ -105,3 +108,63 @@ def mycontests_view(request):
 
     return render(request, "contest/mycontests.html", {"user": user, "contests": participated_contests})
 
+@login_required
+def show_voting_view(request):
+    now = timezone.now()
+    three_days_ago = now - timedelta(days=3)
+
+    # Contests whose end_date is within the last 3 days (Voting open)
+    voting_open_contests = Contest.objects.filter(end_date__gte=three_days_ago, end_date__lte=now)
+
+    # Contests whose end_date is more than 3 days ago (Voting closed)
+    voting_closed_contests = Contest.objects.filter(end_date__lt=three_days_ago)
+
+    return render(request, "contest/show_voting_page.html", {
+        "voting_open_contests": voting_open_contests,
+        "voting_closed_contests": voting_closed_contests,
+    })
+    
+@login_required
+def voting_view(request, contest_id):
+    contest = get_object_or_404(Contest, id=contest_id)
+    user = request.user
+    now = timezone.now()
+    voting_end_time = contest.end_date + timedelta(days=3)  # Voting lasts 3 days after contest ends
+    
+    # Check if voting is still open
+    voting_open = now <= voting_end_time
+     # Fetch all submissions for this contest
+    submissions = Submission.objects.filter(contest_id=contest).order_by('-votes')
+     # Get top 3 winners
+    top_winners = list(submissions[:3])
+
+    # Get remaining submissions (excluding top 3)
+    other_submissions = submissions
+    return render(
+        request, "contest/voting.html",
+        {
+        "contest": contest,
+        "top_winners": top_winners,
+        "other_submissions": other_submissions,
+        "voting_open": voting_open,
+        "voting_end_time": voting_end_time
+        }
+    )
+
+@login_required
+def vote_submission(request, submission_id):
+    if request.method == "POST":
+        submission = get_object_or_404(Submission, id=submission_id)
+        user = request.user
+
+        # Check if the user has already voted
+        if submission in user.voted_submissions.all():
+            messages.error(request, "You have already voted for this submission.")
+        else:
+            # Add submission to user's voted list
+            user.voted_submissions.add(submission)
+            submission.votes += 1
+            submission.save()
+            messages.success(request, "Your vote has been counted.")
+
+    return redirect(request.META.get("HTTP_REFERER", "voting_page"))

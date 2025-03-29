@@ -44,10 +44,11 @@
       </div>
       {% endblock %}
 
-      <!--  -->
+      {% if not is_ended %}
+            <!-- if not ended -->
       {% if messages %}
       {% for message in messages %}
-      <div class="message">
+      <span class="message">
         {% if message.tags == 'error' %}
         <div class="p-4 mb-4 text-sm text-red-900 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
           <span class="font-medium">{{ message }}</span>
@@ -57,7 +58,7 @@
           <span class="font-medium">{{ message }}</span>
         </div>
         {% endif %}
-      </div>
+      </span>
       {% endfor %}
       {% endif %}
       {% if not has_participated %}
@@ -89,7 +90,16 @@
 
       <form method="post" class="editorForm">
         {% csrf_token %}
-        <p>You have participated! Start coding.</p>
+        <div class="flex items-center justify-center mt-4">
+          <span class="inline-flex items-center px-4 py-2 text-lg font-semibold text-white bg-green-400 rounded-lg shadow-md">
+              <span id="contestCountdown" class="ml-2 font-bold">You have Participated! Start Coding.</span>
+          </span>
+      </div>      
+        <div class="flex items-center justify-center mt-4">
+          <span class="inline-flex items-center px-4 py-2 text-lg font-semibold text-white bg-red-600 rounded-lg shadow-md">
+              ⏳ Ends At: <span id="contestCountdown" class="ml-2 font-bold">{{contest.end_date}}</span>
+          </span>
+      </div>      
         </br>
         <div class="codeContainer">
           {% if has_participated %}
@@ -118,8 +128,19 @@
         <iframe id="output-frame"></iframe>
         {% endif %}
       </div>
-
-
+      {% else %}
+      <!-- if ended -->
+      <div class="flex items-center justify-center mt-4">
+        <span class="inline-flex items-center px-4 py-2 text-lg font-semibold text-white bg-red-600 rounded-lg shadow-md">
+            ⏳ Contest Ended
+        </span>
+    </div>
+    <div class="flex items-center justify-center mt-4">
+        <a href="#" class="px-6 py-3 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600">
+            Go to Voting
+        </a>
+    </div>
+    {% endif %}
 
     </div>
   </div>

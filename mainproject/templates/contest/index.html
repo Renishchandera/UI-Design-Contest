@@ -17,13 +17,11 @@
 
 <body class="rootContainer">
     {% csrf_token %}
-
     <div class="mainContainer">
         {% include 'contest/navbar.html' %}
-        <div class="contestContainer">
+        <div class="contestsContainer">
 
 
-        
             <!-- Display from indexview sending contests parameter -->
             {% for contest in contests %}
             
