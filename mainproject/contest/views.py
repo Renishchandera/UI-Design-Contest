@@ -100,6 +100,21 @@ def profile_view(request, user_id):
         return render(request, "contest/profile.html", {"user": user, "submissions": submissions})
     else:
         return redirect('index_view')
+    
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect('profile')  # Redirect back to profile page
+    else:
+        messages.error(request, "Invalid request.")
+        return redirect('profile')
+ 
 @login_required   
 def mycontests_view(request):
     user = request.user
@@ -138,6 +153,19 @@ def voting_view(request, contest_id):
      # Get top 3 winners
     top_winners = list(submissions[:3])
 
+     # Calculate Prize Pool
+    total_participants = Submission.objects.filter(contest_id=contest).count()
+    entry_fee = contest.entry_fee  # Assuming entry_fee is stored in Contest model
+    prize_pool = total_participants * entry_fee  # Total prize pool
+
+    # Calculate individual rewards
+    rewards = {
+        "first": int(prize_pool * 0.50),
+        "second": int(prize_pool * 0.30),
+        "third": int(prize_pool * 0.20)
+    }
+
+
     # Get remaining submissions (excluding top 3)
     other_submissions = submissions
     return render(
@@ -147,7 +175,9 @@ def voting_view(request, contest_id):
         "top_winners": top_winners,
         "other_submissions": other_submissions,
         "voting_open": voting_open,
-        "voting_end_time": voting_end_time
+        "voting_end_time": voting_end_time,
+        "prize_pool": prize_pool,
+        "rewards": rewards
         }
     )
 
@@ -168,3 +198,53 @@ def vote_submission(request, submission_id):
             messages.success(request, "Your vote has been counted.")
 
     return redirect(request.META.get("HTTP_REFERER", "voting_page"))
+
+
+@login_required
+def claim_reward(request, submission_id):
+    submission = get_object_or_404(Submission, id=submission_id)
+    
+    # Check if voting has ended
+    now = timezone.now()
+    voting_end_time = submission.contest_id.end_date + timedelta(days=3)
+    
+    if now < voting_end_time:
+        messages.error(request, "You can only claim rewards after voting ends.")
+        return redirect('voting_view', contest_id=submission.contest_id.id)
+
+    # Check if the user is eligible to claim
+    submissions = Submission.objects.filter(contest_id=submission.contest_id).order_by('-votes')
+    top_winners = list(submissions[:3])
+
+    if submission not in top_winners:
+        messages.error(request, "You are not in the top 3 winners.")
+        return redirect('voting_view', contest_id=submission.contest_id.id)
+
+    # Check if already claimed
+    if submission.claimed_reward:
+        messages.error(request, "You have already claimed your reward.")
+        return redirect('voting_view', contest_id=submission.contest_id.id)
+
+    # Determine the reward amount
+    total_participants = Submission.objects.filter(contest_id=submission.contest_id).count()
+    entry_fee = submission.contest_id.entry_fee
+    prize_pool = total_participants * entry_fee
+
+    position = top_winners.index(submission) + 1
+    if position == 1:
+        reward = int(prize_pool * 0.50)
+    elif position == 2:
+        reward = int(prize_pool * 0.30)
+    else:
+        reward = int(prize_pool * 0.20)
+
+    # Mark reward as claimed
+    submission.claimed_reward = True
+    submission.save()
+
+    # Assuming user has a 'coins' field to store rewards
+    submission.user_id.coins += reward
+    submission.user_id.save()
+
+    messages.success(request, f"🎉 Reward of {reward} coins has been added to your account!")
+    return redirect('voting_view', contest_id=submission.contest_id.id)

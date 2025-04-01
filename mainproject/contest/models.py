@@ -29,6 +29,7 @@ class Submission(models.Model):
     contest_id = models.ForeignKey(Contest, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     votes = models.PositiveIntegerField(default=0)
+    claimed_reward = models.BooleanField(default=False)  # Track if reward is claimed
 
     def __str__(self):
         return f"{self.user_id.username}'s submission for {self.contest_id.title}"
